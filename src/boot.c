@@ -27,6 +27,7 @@
 #include <string.h>
 #include <sys/types.h>
 #include <stdlib.h>
+#include <stdarg.h>
 
 #include "common.h"
 #include "dosfsck.h"
@@ -68,6 +69,17 @@ static struct {
 #else
 #define GET_UNALIGNED_W(f) CF_LE_W( *(unsigned short *)&f )
 #endif
+
+void die_notfat(char *msg,...)
+{
+    va_list args;
+
+    va_start(args,msg);
+    vfprintf(stderr,msg,args);
+    va_end(args);
+    fprintf(stderr,"\n");
+    exit(4);
+}
 
 
 static char *get_media_descr( unsigned char media )
@@ -299,9 +311,9 @@ void read_boot(DOS_FS *fs)
 
     fs_read(0,sizeof(b),&b);
     logical_sector_size = GET_UNALIGNED_W(b.sector_size);
-    if (!logical_sector_size) die("Logical sector size is zero.");
+    if (!logical_sector_size) die_notfat("Logical sector size is zero.");
     fs->cluster_size = b.cluster_size*logical_sector_size;
-    if (!fs->cluster_size) die("Cluster size is zero.");
+    if (!fs->cluster_size) die_notfat("Cluster size is zero.");
     if (b.fats != 2 && b.fats != 1)
 	die("Currently, only 1 or 2 FATs are supported, not %d.\n",b.fats);
     fs->nfats = b.fats;
@@ -337,7 +349,7 @@ void read_boot(DOS_FS *fs)
 	    printf( "Warning: FAT32 root dir not in cluster chain! "
 		    "Compability mode...\n" );
 	else if (!fs->root_cluster && !fs->root_entries)
-	    die("No root directory!");
+	    die_notfat("No root directory!");
 	else if (fs->root_cluster && fs->root_entries)
 	    printf( "Warning: FAT32 root dir is in a cluster chain, but "
 		    "a separate root dir\n"
