@@ -199,7 +199,7 @@ int main(int argc,char **argv)
     printf( "%s: %u files, %lu/%lu clusters\n", argv[optind],
 	    n_files, fs.clusters - free_clusters, fs.clusters );
 
-    return fs_close(rw) ? 1 : 0;
+    exit(fs_close(rw) ? 4 : 0);
 }
 
 /* Local Variables: */
