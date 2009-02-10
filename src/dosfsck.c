@@ -120,7 +120,7 @@ int main(int argc,char **argv)
 	    case 'y':
 		rw = 1;
 		interactive = 0;
-		salvage_files = 1;
+//		salvage_files = 1;
 		break;
 	    case 'd':
 		file_add(optarg,fdt_drop);
