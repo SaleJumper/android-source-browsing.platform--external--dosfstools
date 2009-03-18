@@ -78,7 +78,7 @@ void die_notfat(char *msg,...)
     vfprintf(stderr,msg,args);
     va_end(args);
     fprintf(stderr,"\n");
-    exit(4);
+    exit(8);
 }
 
 
